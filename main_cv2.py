@@ -3,26 +3,28 @@ from colors import Colors
 import keyboard
 import time
 import statistics as stat
+from imagesearch import imagesearcharea
+import cv2
 
 button_y = 1500
 left_button_x = 1200
 right_button_x = 1500
 start_button_x = (left_button_x + right_button_x) / 2
-abs_branch_y = 935
-abs_right_branch_x = 1500
-abs_left_branch_x = 1245
 
-top_x = 1150
-top_y = 800
-bottom_x = 450
-width = 700
-height = 400
+top_x = 1050
+top_y = 780
+bottom_x = 1700
+bottom_y = 1000
+
+right_branch = cv2.imread("right_branch.png", 0)
+left_branch = cv2.imread("left_branch.png", 0)
+
 
 branch_search_area = (
     top_x,
     top_y,
-    width,
-    height
+    bottom_x,
+    bottom_y
 )
 side = ""
 durations = []
@@ -61,25 +63,20 @@ def click_right():
 
 def check_branch():
     time1 = time.time()
-    # s = pyautogui.screenshot('scrn.png', region=branch_search_area)
-    s = pyautogui.screenshot()
     global side
     if side == "left":
-        # if s.getpixel((abs_left_branch_x - top_x, abs_branch_y - top_y)) == (161, 116, 56):
-        if s.getpixel((abs_left_branch_x, abs_branch_y)) == (161, 116, 56):
+        if imagesearcharea(left_branch, *branch_search_area):
             click_right()
         else:
             click_left()
     else:
-        # if s.getpixel((abs_right_branch_x - top_x, abs_branch_y - top_y)) == (161, 116, 56):
-        if s.getpixel((abs_right_branch_x, abs_branch_y)) == (161, 116, 56):
+        if imagesearcharea(right_branch, *branch_search_area):
             click_left()
         else:
             click_right()
     durations.append(time.time() - time1)
     # print(Colors.PINK + "time elapsed: " + str(time.time() - time1) + Colors.RESET)
     print(Colors.SKY + "avg dur: " + str(stat.mean(durations)) + Colors.RESET)
-    pyautogui.sleep(0.04)
 
 
 def main():
